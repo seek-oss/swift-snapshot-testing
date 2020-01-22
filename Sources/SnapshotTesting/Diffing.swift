@@ -10,7 +10,7 @@ public struct Diffing<Value> {
   public var fromData: (Data) -> Value
 
   /// Compares two values. If the values do not match, returns a failure message and artifacts describing the failure.
-  public var diff: (Value, Value) -> (String, [XCTAttachment])?
+  public var diff: (Value, Value) -> (String, [DiffingArtifact<Value>])?
 
   /// Creates a new `Diffing` on `Value`.
   ///
@@ -25,10 +25,38 @@ public struct Diffing<Value> {
   public init(
     toData: @escaping (_ value: Value) -> Data,
     fromData: @escaping (_ data: Data) -> Value,
-    diff: @escaping (_ lhs: Value, _ rhs: Value) -> (String, [XCTAttachment])?
+    diff: @escaping (_ lhs: Value, _ rhs: Value) -> (String, [DiffingArtifact<Value>])?
     ) {
     self.toData = toData
     self.fromData = fromData
     self.diff = diff
   }
+}
+
+public struct DiffingArtifact<Value> {
+    /// The name of artifact type, i.e. "reference", "failure", "patch", etc.
+    public var name: String?
+    
+    /// UTI (Uniform Type Identifier) of the payload data for an `XCTAttachment`.
+    public var uniformTypeIdentifier: String
+    
+    /// The value of the artifact.
+    public var value: Value
+    
+    /// Creates a new `DiffingArtifact` on `Value`.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the artifact, to be written to disk and included
+    ///   as an `XCTAttachment`.
+    ///   - uniformTypeIdentifier: UTI for `XCTAttachment` payload representing the artifact.
+    ///   - value: The value to be written to disk and included as an `XCTAttachment` payload.
+    public init(
+        name: String? = nil,
+        uniformTypeIdentifier: String,
+        value: Value
+    ) {
+        self.name = name
+        self.uniformTypeIdentifier = uniformTypeIdentifier
+        self.value = value
+    }
 }

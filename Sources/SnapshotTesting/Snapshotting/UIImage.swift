@@ -27,16 +27,25 @@ extension Diffing where Value == UIImage {
     ) { old, new in
       guard let message = compare(old, new, precision: precision, perceptualPrecision: perceptualPrecision) else { return nil }
       let difference = SnapshotTesting.diff(old, new)
-      let oldAttachment = XCTAttachment(image: old)
-      oldAttachment.name = "reference"
+      let oldArtifact = DiffingArtifact(
+        name: "reference",
+        uniformTypeIdentifier: "public.png",
+        value: old
+      )
       let isEmptyImage = new.size == .zero
-      let newAttachment = XCTAttachment(image: isEmptyImage ? emptyImage() : new)
-      newAttachment.name = "failure"
-      let differenceAttachment = XCTAttachment(image: difference)
-      differenceAttachment.name = "difference"
+      let newArtifact = DiffingArtifact(
+        name: "failure",
+        uniformTypeIdentifier: "public.png",
+        value: isEmptyImage ? emptyImage() : new
+      )
+      let diffArtifact = DiffingArtifact(
+        name: "difference",
+        uniformTypeIdentifier: "public.png",
+        value: difference
+      )
       return (
         message,
-        [oldAttachment, newAttachment, differenceAttachment]
+        [oldArtifact, newArtifact, diffArtifact]
       )
     }
   }
