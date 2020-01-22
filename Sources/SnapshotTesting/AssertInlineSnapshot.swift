@@ -144,7 +144,13 @@ public func _verifyInlineSnapshot<Value>(
         if ProcessInfo.processInfo.environment.keys.contains("__XCODE_BUILT_PRODUCTS_DIR_PATHS") {
           XCTContext.runActivity(named: "Attached Failure Diff") { activity in
             attachments.forEach {
-              activity.add($0)
+              let data = snapshotting.diffing.toData($0.value)
+              let attachment = XCTAttachment(
+                data: data,
+                uniformTypeIdentifier: $0.uniformTypeIdentifier
+              )
+              attachment.name = $0.name
+              activity.add(attachment)
             }
           }
         }
