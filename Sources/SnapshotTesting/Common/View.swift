@@ -597,7 +597,7 @@ extension View {
       }
     }
     #if os(iOS) || os(macOS)
-    if let wkWebView = self as? WKWebView {
+    if let wkWebView = self as? WKWebView, !wkWebView.isHiddenBySuperview {
       return Async<Image> { callback in
         let delegate = NavigationDelegate()
         let work = {
@@ -629,6 +629,21 @@ extension View {
     return nil
   }
 }
+
+#if os(iOS) || os(tvOS)
+extension UIView {
+  var isHiddenBySuperview: Bool {
+    var current: UIView? = self
+    while let v = current {
+      if v.isHidden {
+        return true
+      }
+      current = v.superview
+    }
+    return false
+  }
+}
+#endif
 
 #if os(iOS) || os(macOS)
 private final class NavigationDelegate: NSObject, WKNavigationDelegate {
