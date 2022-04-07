@@ -87,7 +87,7 @@ let imageContextColorSpace = CGColorSpace(name: CGColorSpace.sRGB)
 let imageContextBitsPerComponent = 8
 let imageContextBytesPerPixel = 4
 
-private func compare(_ old: UIImage, _ new: UIImage, precision: Float, pixelDiffThreshold: UInt8) -> Bool {
+private func compare(_ old: UIImage, _ new: UIImage, precision: Float, subpixelThreshold: UInt8) -> Bool {
   guard let oldCgImage = old.cgImage else { return false }
   guard let newCgImage = new.cgImage else { return false }
   guard oldCgImage.width != 0 else { return false }
